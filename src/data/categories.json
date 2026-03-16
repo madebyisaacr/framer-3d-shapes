@@ -1,0 +1,18 @@
+{
+	"clay": {
+		"name": "Clay",
+		"assetGroups": ["airnauts-3d-shapes", "assetpro-clay"]
+	},
+	"metallic": {
+		"name": "Metallic",
+		"assetGroups": ["3d-chroma-shapes", "metallic-abstract-3d-shapes", "assetpro-metallic"]
+	},
+	"iridescent": {
+		"name": "Iridescent",
+		"assetGroups": ["liquid-abstract-shapes", "assetpro-iridescent", "abstract-3d-shapes"]
+	},
+	"other": {
+		"name": "Other",
+		"assetGroups": ["assetpro-other"]
+	}
+}

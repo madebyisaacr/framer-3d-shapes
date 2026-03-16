@@ -88,7 +88,7 @@ export default function AdminUI() {
 	};
 
 	return (
-		<main>
+		<main className="admin-ui">
 			<button onClick={onCopySelection}>Copy Selection</button>
 			<button onClick={onCopyAll}>Copy All Images</button>
 		</main>

@@ -1,38 +1,54 @@
 import { Draggable, framer, useIsAllowedTo } from "framer-plugin";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import assetsData from "./assets.json";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import AdminUI from "./AdminUI";
+import assetsData from "./data/assets.json";
+import categoriesData from "./data/categories.json";
 import { SearchIcon } from "./icons";
 import { normalizeFramerImageUrl } from "./utils";
-import "./globals.css";
+import "./App.css";
 
-const mode = framer.mode;
+const isLocalhost =
+	typeof window !== "undefined" &&
+	(window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
-const minWindowWidth = mode === "canvas" ? 260 : 600;
-const resizable = framer.mode === "canvas";
 const PAGE_SIZE = 24;
 
 void framer.showUI({
 	position: "top right",
-	width: minWindowWidth,
-	minWidth: minWindowWidth,
+	width: framer.mode === "canvas" ? 260 : 600,
+	minWidth: framer.mode === "canvas" ? 260 : 600,
 	maxWidth: 750,
 	minHeight: 400,
-	resizable,
+	resizable: framer.mode === "canvas",
 });
 
-type AssetImage = { id: string; name: string; url: string };
+type AssetImage = { id: string; name: string; url: string; assetGroupId: string };
 
 const dataByCategory = assetsData as Record<string, Array<{ name: string; url: string }>>;
 const allAssets: AssetImage[] = [];
-for (const [category, items] of Object.entries(dataByCategory)) {
+for (const [assetGroupId, items] of Object.entries(dataByCategory)) {
 	if (!Array.isArray(items)) continue;
 	items.forEach((item, index) => {
 		allAssets.push({
-			id: `${category}-${index}-${item.url}`,
+			id: `${assetGroupId}-${index}-${item.url}`,
 			name: item.name,
 			url: item.url,
+			assetGroupId,
 		});
 	});
+}
+
+type CategoryEntry = { name: string; assetGroups: string[] };
+const categoriesDataTyped = categoriesData as Record<string, CategoryEntry>;
+const categoriesList = Object.entries(categoriesDataTyped).map(([id, entry]) => ({
+	value: id,
+	label: entry.name,
+}));
+const assetGroupToCategory = new Map<string, string>();
+for (const [catId, entry] of Object.entries(categoriesDataTyped)) {
+	for (const groupId of entry.assetGroups) {
+		assetGroupToCategory.set(groupId, catId);
+	}
 }
 
 function filterAssetsByQuery(assets: AssetImage[], query: string): AssetImage[] {
@@ -41,8 +57,16 @@ function filterAssetsByQuery(assets: AssetImage[], query: string): AssetImage[] 
 	return assets.filter((a) => a.name.toLowerCase().includes(q));
 }
 
-function useAssetsInfinite(query: string) {
-	const filtered = useMemo(() => filterAssetsByQuery(allAssets, query), [query]);
+function filterAssetsByCategory(assets: AssetImage[], categoryId: string): AssetImage[] {
+	if (!categoryId) return assets;
+	return assets.filter((a) => assetGroupToCategory.get(a.assetGroupId) === categoryId);
+}
+
+function useAssetsInfinite(query: string, categoryId: string) {
+	const filtered = useMemo(() => {
+		const byCategory = filterAssetsByCategory(allAssets, categoryId);
+		return filterAssetsByQuery(byCategory, query);
+	}, [query, categoryId]);
 	const [pageIndex, setPageIndex] = useState(0);
 
 	const pages = useMemo(() => {
@@ -67,7 +91,7 @@ function useAssetsInfinite(query: string) {
 
 	useEffect(() => {
 		setPageIndex(0);
-	}, [query]);
+	}, [query, categoryId]);
 
 	return {
 		data,
@@ -79,7 +103,31 @@ function useAssetsInfinite(query: string) {
 }
 
 export function App() {
+	const [showAdminUI, setShowAdminUI] = useState(false);
+
+	useEffect(() => {
+		if (!isLocalhost) {
+			void framer.setMenu([]);
+			return;
+		}
+		void framer.setMenu([
+			{
+				label: showAdminUI ? "Back" : "Admin Menu",
+				onAction: () => setShowAdminUI((prev) => !prev),
+			},
+		]);
+	}, [showAdminUI]);
+
+	return (
+		<React.StrictMode>
+			{isLocalhost && showAdminUI ? <AdminUI /> : <AssetPicker />}
+		</React.StrictMode>
+	);
+}
+
+function AssetPicker() {
 	const [query, setQuery] = useState("");
+	const [categoryId, setCategoryId] = useState("");
 	const debouncedQuery = useDebounce(query, 200);
 
 	return (
@@ -87,26 +135,44 @@ export function App() {
 			<div className="search-header">
 				<input
 					type="text"
-					placeholder="Search assets…"
+					placeholder="Search…"
 					value={query}
 					className="search-input"
-					autoFocus
 					onChange={(e) => setQuery(e.target.value)}
 				/>
 				<div className="search-icon-wrap">
 					<SearchIcon />
 				</div>
 			</div>
-			<PhotosList query={debouncedQuery} />
+			<select
+				className="category-dropdown"
+				value={categoryId}
+				onChange={(e) => setCategoryId(e.target.value)}
+				aria-label="Category"
+			>
+				<option value="">All</option>
+				{categoriesList.map((cat) => (
+					<option key={cat.value} value={cat.value}>
+						{cat.label}
+					</option>
+				))}
+			</select>
+			<PhotosList query={debouncedQuery} categoryId={categoryId} />
 		</main>
 	);
 }
 
 type AssetId = string;
 
-const PhotosList = memo(function PhotosList({ query }: { query: string }) {
+const PhotosList = memo(function PhotosList({
+	query,
+	categoryId,
+}: {
+	query: string;
+	categoryId: string;
+}) {
 	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage");
-	const { data, fetchNextPage, hasNextPage } = useAssetsInfinite(query);
+	const { data, fetchNextPage, hasNextPage } = useAssetsInfinite(query, categoryId);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const previousWindowHeightRef = useRef(window.innerHeight);
 	const [loadingId, setLoadingId] = useState<AssetId | null>(null);
@@ -156,7 +222,7 @@ const PhotosList = memo(function PhotosList({ query }: { query: string }) {
 	useEffect(() => {
 		const el = scrollRef.current;
 		if (el) el.scrollTop = 0;
-	}, [query]);
+	}, [query, categoryId]);
 
 	useEffect(() => {
 		const scrollElement = scrollRef.current;
@@ -186,7 +252,7 @@ const PhotosList = memo(function PhotosList({ query }: { query: string }) {
 
 	return (
 		<div className="scroll-container no-scrollbar" ref={scrollRef} onScroll={handleScroll}>
-			<div className="assets-grid">
+			<div className={`assets-grid ${framer.mode === "canvas" ? "canvas" : "image"}`}>
 				{flatAssets.map((asset) => (
 					<GridItem
 						key={asset.id}

@@ -18,6 +18,7 @@ void framer.showUI({
 	width: framer.mode === "canvas" ? 260 : 600,
 	minWidth: framer.mode === "canvas" ? 260 : 600,
 	maxWidth: 750,
+	height: 450,
 	minHeight: 400,
 	resizable: framer.mode === "canvas",
 });
@@ -132,7 +133,7 @@ function AssetPicker() {
 
 	return (
 		<main>
-			<div className="search-header">
+			{/* <div className="search-header">
 				<input
 					type="text"
 					placeholder="Search…"
@@ -143,7 +144,7 @@ function AssetPicker() {
 				<div className="search-icon-wrap">
 					<SearchIcon />
 				</div>
-			</div>
+			</div> */}
 			<select
 				className="category-dropdown"
 				value={categoryId}

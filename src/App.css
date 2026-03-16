@@ -88,9 +88,13 @@ main {
 	background-position: center;
 	position: relative;
 	border-radius: 0.5rem;
-	background-color: var(--framer-color-bg-secondary);
 	flex-shrink: 0;
 	height: auto;
+	background-color: var(--framer-color-bg-tertiary);
+}
+
+[data-framer-theme="dark"] .grid-item-btn {
+	background-color: var(--framer-color-bg-secondary);
 }
 
 .grid-item-overlay {

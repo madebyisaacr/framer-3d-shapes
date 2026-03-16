@@ -1,8 +1,6 @@
 {
-  "id": "876a29",
-  "name": "Framer 3 D Shapes",
-  "modes": [
-    "canvas"
-  ],
-  "icon": "/icon.svg"
+	"id": "3dShps",
+	"name": "Framer 3D Shapes",
+	"modes": ["canvas", "image"],
+	"icon": "/icon.svg"
 }

@@ -1,4 +1,4 @@
-# Framer Plugin Template
+# Framer 3D Shapes Plugin
 
 This is a template for using the Framer Plugin API in a TypeScript project.
 

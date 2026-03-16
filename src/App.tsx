@@ -52,6 +52,19 @@ for (const [catId, entry] of Object.entries(categoriesDataTyped)) {
 	}
 }
 
+const CATEGORY_STORAGE_KEY = "framer-3d-shapes-category";
+const validCategoryIds = new Set(["", ...Object.keys(categoriesDataTyped)]);
+
+function getStoredCategoryId(): string {
+	try {
+		const stored = localStorage.getItem(CATEGORY_STORAGE_KEY);
+		if (stored !== null && validCategoryIds.has(stored)) return stored;
+	} catch {
+		// ignore
+	}
+	return "";
+}
+
 function filterAssetsByQuery(assets: AssetImage[], query: string): AssetImage[] {
 	const q = query.trim().toLowerCase();
 	if (!q) return assets;
@@ -119,16 +132,21 @@ export function App() {
 		]);
 	}, [showAdminUI]);
 
-	return (
-		<React.StrictMode>
-			{isLocalhost && showAdminUI ? <AdminUI /> : <AssetPicker />}
-		</React.StrictMode>
-	);
+	return isLocalhost && showAdminUI ? <AdminUI /> : <AssetPicker />;
 }
 
 function AssetPicker() {
 	const [query, setQuery] = useState("");
-	const [categoryId, setCategoryId] = useState("");
+	const [categoryId, setCategoryId] = useState(getStoredCategoryId);
+
+	useEffect(() => {
+		try {
+			localStorage.setItem(CATEGORY_STORAGE_KEY, categoryId);
+		} catch {
+			// ignore
+		}
+	}, [categoryId]);
+
 	const debouncedQuery = useDebounce(query, 200);
 
 	return (
@@ -201,7 +219,7 @@ const PhotosList = memo(function PhotosList({
 	const addAsset = useCallback(async (asset: AssetImage) => {
 		setLoadingId(asset.id);
 		try {
-			if (mode === "canvas") {
+			if (framer.mode === "canvas") {
 				await framer.addImage({
 					image: asset.url,
 					name: asset.name,

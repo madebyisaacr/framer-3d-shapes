@@ -114,6 +114,7 @@ main {
 	top: 5px;
 	right: 5px;
 	background-color: rgba(0, 0, 0, 0.5);
+	color: #fff;
 	border-radius: 5px;
 	width: 20px;
 	height: 20px;
@@ -123,7 +124,7 @@ main {
 }
 
 [data-framer-theme="dark"] .grid-item-info-btn {
-	background-color: rgba(200, 200, 200, 0.7);
+	background-color: rgba(200, 200, 200, 0.4);
 }
 
 .grid-item-btn:hover .grid-item-info-btn {

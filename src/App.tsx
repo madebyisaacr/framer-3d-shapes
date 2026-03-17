@@ -71,6 +71,21 @@ for (const [catId, entry] of Object.entries(categoriesDataTyped)) {
 const CATEGORY_STORAGE_KEY = "framer-3d-shapes-category";
 const validCategoryIds = new Set(["", ...Object.keys(categoriesDataTyped)]);
 
+const allGroupIds = Object.keys(groupsDataTyped);
+
+function shuffleInPlace<T>(array: T[]): void {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
+shuffleInPlace(allGroupIds);
+
+const randomizedGroupOrder = new Map<string, number>(
+	allGroupIds.map((groupId, index) => [groupId, index])
+);
+
 function inferFilenameFromUrl(url: string, fallbackBaseName: string) {
 	try {
 		const { pathname } = new URL(url);
@@ -98,6 +113,7 @@ async function downloadAssetUrl(url: string, name: string) {
 			document.body.appendChild(a);
 			a.click();
 			a.remove();
+			framer.notify(`Downloaded asset`, { variant: "success" });
 		} finally {
 			URL.revokeObjectURL(objectUrl);
 		}
@@ -108,6 +124,7 @@ async function downloadAssetUrl(url: string, name: string) {
 		a.target = "_blank";
 		a.rel = "noopener noreferrer";
 		a.click();
+		framer.notify(`Downloaded asset`, { variant: "success" });
 	}
 }
 
@@ -168,7 +185,15 @@ function filterAssetsByQuery(assets: AssetImage[], query: string): AssetImage[] 
 }
 
 function filterAssetsByCategory(assets: AssetImage[], categoryId: string): AssetImage[] {
-	if (!categoryId) return assets;
+	if (!categoryId) {
+		return assets
+			.slice()
+			.sort(
+				(a, b) =>
+					(randomizedGroupOrder.get(a.assetGroupId) ?? Number.MAX_SAFE_INTEGER) -
+					(randomizedGroupOrder.get(b.assetGroupId) ?? Number.MAX_SAFE_INTEGER)
+			);
+	}
 	const category = categoriesDataTyped[categoryId];
 	if (!category) return assets;
 
@@ -300,6 +325,7 @@ function AssetPicker() {
 				});
 				framer.closePlugin();
 			}
+			framer.notify(`Inserted asset`, { variant: "success" });
 		} catch {
 			// ignore (same behavior as grid insert: don't block UI)
 		}
@@ -472,6 +498,7 @@ const PhotosList = memo(function PhotosList({
 				});
 				framer.closePlugin();
 			}
+			framer.notify(`Inserted asset`, { variant: "success" });
 		} finally {
 			setLoadingId(null);
 		}
@@ -591,10 +618,26 @@ const GridItem = memo(function GridItem({
 							event.stopPropagation();
 							onShowSource(asset);
 						}}
-					/>
+					>
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 20 20"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								d="M10 9V14"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+							<circle cx="10" cy="5.5" r="1.25" fill="currentColor" />
+						</svg>
+					</div>
 				</button>
 			</Draggable>
-			{/* <span className="grid-item-label">{asset.name}</span> */}
 		</div>
 	);
 });

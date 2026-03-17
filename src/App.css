@@ -75,7 +75,7 @@ main {
 }
 
 .assets-grid.canvas {
-	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(max(100px, calc(100% / 5)), 1fr));
 }
 
 .assets-grid.image {
@@ -201,6 +201,8 @@ main {
 
 .modal {
 	width: 100%;
+	max-width: 260px;
+	max-height: 100%;
 	padding: 15px;
 	display: flex;
 	flex-direction: column;
@@ -249,7 +251,6 @@ main {
 	width: 100%;
 	object-fit: contain;
 	object-position: center;
-	cursor: grab;
 }
 
 .modal-content {

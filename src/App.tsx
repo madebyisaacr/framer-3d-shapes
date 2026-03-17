@@ -22,11 +22,12 @@ const LICENSE_URLS = {
 
 void framer.showUI({
 	position: "top right",
-	width: IS_CANVAS ? 260 : 600,
+	width: IS_CANVAS ? 280 : 600,
 	minWidth: IS_CANVAS ? 260 : 600,
-	maxWidth: 750,
-	height: IS_CANVAS ? 450 : 600,
+	maxWidth: 600,
+	height: IS_CANVAS ? 450 : 625,
 	minHeight: 400,
+	maxHeight: 740,
 	resizable: IS_CANVAS,
 });
 

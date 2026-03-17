@@ -45,7 +45,12 @@ for (const [assetGroupId, items] of Object.entries(dataByCategory)) {
 type CategoryEntry = { name: string; assetGroups: string[] };
 const categoriesDataTyped = categoriesData as Record<string, CategoryEntry>;
 type GroupEntry = { colorizable: boolean; source: string };
-type SourceEntry = { source: string; sourceTitle: string; authorName: string; license?: string };
+type SourceEntry = {
+	source: string;
+	sourceTitle: string;
+	authorName: string;
+	license?: string | null;
+};
 const groupsDataTyped = groupsData as Record<string, GroupEntry>;
 const sourcesDataTyped = sourcesData as Record<string, SourceEntry>;
 const categoriesList = Object.entries(categoriesDataTyped).map(([id, entry]) => ({
@@ -61,6 +66,86 @@ for (const [catId, entry] of Object.entries(categoriesDataTyped)) {
 
 const CATEGORY_STORAGE_KEY = "framer-3d-shapes-category";
 const validCategoryIds = new Set(["", ...Object.keys(categoriesDataTyped)]);
+
+function inferFilenameFromUrl(url: string, fallbackBaseName: string) {
+	try {
+		const { pathname } = new URL(url);
+		const lastSegment = pathname.split("/").filter(Boolean).pop();
+		if (lastSegment && lastSegment.includes(".")) return lastSegment;
+	} catch {
+		// ignore
+	}
+	const safeBase = fallbackBaseName.trim().replace(/[^\w-]+/g, "_") || "asset";
+	return `${safeBase}.png`;
+}
+
+async function downloadAssetUrl(url: string, name: string) {
+	const filename = inferFilenameFromUrl(url, name);
+	try {
+		const res = await fetch(url);
+		if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+		const blob = await res.blob();
+		const objectUrl = URL.createObjectURL(blob);
+		try {
+			const a = document.createElement("a");
+			a.href = objectUrl;
+			a.download = filename;
+			a.rel = "noopener noreferrer";
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+		} finally {
+			URL.revokeObjectURL(objectUrl);
+		}
+	} catch {
+		// Fallback: let the browser handle it (may open in a new tab depending on headers)
+		const a = document.createElement("a");
+		a.href = url;
+		a.target = "_blank";
+		a.rel = "noopener noreferrer";
+		a.click();
+	}
+}
+
+function showAssetContextMenu(opts: {
+	asset: AssetImage;
+	location: { x: number; y: number };
+	isInsertEnabled: boolean;
+	onInsert: () => void;
+	onInfo: () => void;
+	showInfo?: boolean;
+}) {
+	const { asset, location, isInsertEnabled, onInsert, onInfo, showInfo = true } = opts;
+	void framer.showContextMenu(
+		[
+			{
+				label: "Insert",
+				enabled: isInsertEnabled,
+				onAction: () => {
+					if (!isInsertEnabled) return;
+					onInsert();
+				},
+			},
+			{
+				label: "Download",
+				onAction: () => {
+					void downloadAssetUrl(asset.url, asset.name);
+				},
+			},
+			...(showInfo
+				? ([
+						{
+							label: "Info",
+							onAction: () => {
+								onInfo();
+							},
+						},
+					] as const)
+				: []),
+		],
+		{ location }
+	);
+}
 
 function getStoredCategoryId(): string {
 	try {
@@ -158,6 +243,8 @@ function AssetPicker() {
 	const [showModal, setShowModal] = useState(false);
 	const [modalContent, setModalContent] = useState<SourceEntry | null>(null);
 	const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
+	const [modalAsset, setModalAsset] = useState<AssetImage | null>(null);
+	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
 
 	useEffect(() => {
 		try {
@@ -176,8 +263,60 @@ function AssetPicker() {
 		if (!source) return;
 		setModalContent(source);
 		setModalImageUrl(asset.url);
+		setModalAsset(asset);
 		setShowModal(true);
 	}, []);
+
+	const handleInsertFromModal = useCallback(async () => {
+		if (!modalAsset) return;
+		if (!isAllowedToUpsertImage) return;
+		try {
+			if (IS_CANVAS) {
+				let currentImage: ImageAsset | null = null;
+				try {
+					currentImage = await framer.getImage();
+				} catch {
+					console.error("Failed to get current image");
+				}
+
+				const imageData = {
+					image: modalAsset.url,
+					name: modalAsset.name,
+				};
+
+				if (currentImage) {
+					await framer.setImage(imageData);
+				} else {
+					await framer.addImage(imageData);
+				}
+			} else {
+				await framer.setImage({
+					image: modalAsset.url,
+					name: modalAsset.name,
+				});
+				framer.closePlugin();
+			}
+		} catch {
+			// ignore (same behavior as grid insert: don't block UI)
+		}
+	}, [isAllowedToUpsertImage, modalAsset]);
+
+	const handleModalContextMenu = useCallback(
+		(event: React.MouseEvent) => {
+			if (!modalAsset) return;
+			event.preventDefault();
+			event.stopPropagation();
+			showAssetContextMenu({
+				asset: modalAsset,
+				location: { x: event.clientX, y: event.clientY },
+				isInsertEnabled: isAllowedToUpsertImage,
+				onInsert: () => void handleInsertFromModal(),
+				onInfo: () => handleShowSource(modalAsset),
+				showInfo: false,
+			});
+		},
+		[handleInsertFromModal, handleShowSource, isAllowedToUpsertImage, modalAsset]
+	);
 
 	return (
 		<main>
@@ -213,12 +352,22 @@ function AssetPicker() {
 					<div className="modal">
 						<div className="modal-content">
 							{modalImageUrl && (
-								<img
-									className="modal-image"
-									src={normalizeFramerImageUrl(modalImageUrl)}
-									alt={modalContent.sourceTitle}
-									draggable={false}
-								/>
+								<Draggable
+									data={{
+										type: "image",
+										image: modalImageUrl,
+										previewImage: normalizeFramerImageUrl(modalImageUrl),
+										name: modalAsset?.name ?? modalContent.sourceTitle,
+									}}
+								>
+									<img
+										className="modal-image"
+										src={normalizeFramerImageUrl(modalImageUrl)}
+										alt={modalAsset?.name ?? modalContent.sourceTitle}
+										draggable={false}
+										onContextMenu={handleModalContextMenu}
+									/>
+								</Draggable>
 							)}
 							<p className="modal-title">Source</p>
 							<p>
@@ -290,7 +439,6 @@ const PhotosList = memo(function PhotosList({
 				const imageData = {
 					image: asset.url,
 					name: asset.name,
-					altText: asset.name,
 				};
 
 				if (currentImage) {
@@ -302,7 +450,6 @@ const PhotosList = memo(function PhotosList({
 				await framer.setImage({
 					image: asset.url,
 					name: asset.name,
-					altText: asset.name,
 				});
 				framer.closePlugin();
 			}
@@ -379,15 +526,29 @@ const GridItem = memo(function GridItem({
 		onSelect(asset);
 	}, [onSelect, asset]);
 
+	const handleContextMenu = useCallback(
+		(event: React.MouseEvent) => {
+			event.preventDefault();
+			event.stopPropagation();
+			showAssetContextMenu({
+				asset,
+				location: { x: event.clientX, y: event.clientY },
+				isInsertEnabled: isAllowedToUpsertImage && !loading,
+				onInsert: handleClick,
+				onInfo: () => onShowSource(asset),
+			});
+		},
+		[asset, handleClick, isAllowedToUpsertImage, loading, onShowSource]
+	);
+
 	return (
-		<div key={asset.id} className="grid-item">
+		<div key={asset.id} className="grid-item" onContextMenu={handleContextMenu}>
 			<Draggable
 				data={{
 					type: "image",
 					image: asset.url,
 					previewImage: normalizeFramerImageUrl(asset.url),
 					name: asset.name,
-					altText: asset.name,
 				}}
 			>
 				<button

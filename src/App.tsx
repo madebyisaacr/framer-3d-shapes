@@ -1,9 +1,11 @@
 import { Draggable, framer, type ImageAsset, useIsAllowedTo } from "framer-plugin";
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdminUI from "./AdminUI";
 import assetsData from "./data/assets.json";
 import categoriesData from "./data/categories.json";
-import { SearchIcon } from "./icons";
+import groupsData from "./data/groups.json";
+import sourcesData from "./data/sources.json";
+// import { SearchIcon } from "./icons";
 import { normalizeFramerImageUrl } from "./utils";
 import "./App.css";
 
@@ -42,6 +44,10 @@ for (const [assetGroupId, items] of Object.entries(dataByCategory)) {
 
 type CategoryEntry = { name: string; assetGroups: string[] };
 const categoriesDataTyped = categoriesData as Record<string, CategoryEntry>;
+type GroupEntry = { colorizable: boolean; source: string };
+type SourceEntry = { source: string; sourceTitle: string; authorName: string; license?: string };
+const groupsDataTyped = groupsData as Record<string, GroupEntry>;
+const sourcesDataTyped = sourcesData as Record<string, SourceEntry>;
 const categoriesList = Object.entries(categoriesDataTyped).map(([id, entry]) => ({
 	value: id,
 	label: entry.name,
@@ -74,7 +80,17 @@ function filterAssetsByQuery(assets: AssetImage[], query: string): AssetImage[] 
 
 function filterAssetsByCategory(assets: AssetImage[], categoryId: string): AssetImage[] {
 	if (!categoryId) return assets;
-	return assets.filter((a) => assetGroupToCategory.get(a.assetGroupId) === categoryId);
+	const category = categoriesDataTyped[categoryId];
+	if (!category) return assets;
+
+	const groupOrder = new Map<string, number>();
+	category.assetGroups.forEach((groupId, index) => {
+		groupOrder.set(groupId, index);
+	});
+
+	return assets
+		.filter((a) => groupOrder.has(a.assetGroupId))
+		.sort((a, b) => (groupOrder.get(a.assetGroupId) ?? 0) - (groupOrder.get(b.assetGroupId) ?? 0));
 }
 
 function useAssetsInfinite(query: string, categoryId: string) {
@@ -137,8 +153,11 @@ export function App() {
 }
 
 function AssetPicker() {
-	const [query, setQuery] = useState("");
+	const [query] = useState("");
 	const [categoryId, setCategoryId] = useState(getStoredCategoryId);
+	const [showModal, setShowModal] = useState(false);
+	const [modalContent, setModalContent] = useState<SourceEntry | null>(null);
+	const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
 
 	useEffect(() => {
 		try {
@@ -149,6 +168,16 @@ function AssetPicker() {
 	}, [categoryId]);
 
 	const debouncedQuery = useDebounce(query, 200);
+
+	const handleShowSource = useCallback((asset: AssetImage) => {
+		const group = groupsDataTyped[asset.assetGroupId];
+		if (!group) return;
+		const source = sourcesDataTyped[group.source];
+		if (!source) return;
+		setModalContent(source);
+		setModalImageUrl(asset.url);
+		setShowModal(true);
+	}, []);
 
 	return (
 		<main>
@@ -177,7 +206,33 @@ function AssetPicker() {
 					</option>
 				))}
 			</select>
-			<PhotosList query={debouncedQuery} categoryId={categoryId} />
+			<PhotosList query={debouncedQuery} categoryId={categoryId} onShowSource={handleShowSource} />
+			{showModal && modalContent && (
+				<div className="modal-container">
+					<div className="modal-backdrop" onClick={() => setShowModal(false)} />
+					<div className="modal">
+						<div className="modal-content">
+							{modalImageUrl && (
+								<img
+									className="modal-image"
+									src={normalizeFramerImageUrl(modalImageUrl)}
+									alt={modalContent.sourceTitle}
+									draggable={false}
+								/>
+							)}
+							<p className="modal-title">Source</p>
+							<p>
+								<a href={modalContent.source} target="_blank" rel="noopener noreferrer">
+									{modalContent.sourceTitle}
+								</a>{" "}
+								by {modalContent.authorName}
+							</p>
+							{modalContent.license && <p>License: {modalContent.license}</p>}
+						</div>
+						<button onClick={() => setShowModal(false)}>OK</button>
+					</div>
+				</div>
+			)}
 		</main>
 	);
 }
@@ -187,9 +242,11 @@ type AssetId = string;
 const PhotosList = memo(function PhotosList({
 	query,
 	categoryId,
+	onShowSource,
 }: {
 	query: string;
 	categoryId: string;
+	onShowSource: (asset: AssetImage) => void;
 }) {
 	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
 	const { data, fetchNextPage, hasNextPage } = useAssetsInfinite(query, categoryId);
@@ -295,6 +352,7 @@ const PhotosList = memo(function PhotosList({
 						loading={loadingId === asset.id}
 						onSelect={addAsset}
 						isAllowedToUpsertImage={isAllowedToUpsertImage}
+						onShowSource={onShowSource}
 					/>
 				))}
 			</div>
@@ -307,6 +365,7 @@ interface GridItemProps {
 	loading: boolean;
 	onSelect: (asset: AssetImage) => void;
 	isAllowedToUpsertImage: boolean;
+	onShowSource: (asset: AssetImage) => void;
 }
 
 const GridItem = memo(function GridItem({
@@ -314,6 +373,7 @@ const GridItem = memo(function GridItem({
 	loading,
 	onSelect,
 	isAllowedToUpsertImage,
+	onShowSource,
 }: GridItemProps) {
 	const handleClick = useCallback(() => {
 		onSelect(asset);
@@ -345,6 +405,13 @@ const GridItem = memo(function GridItem({
 					<div className={`grid-item-overlay ${loading ? "loading" : ""}`}>
 						{loading && <div className="spinner" />}
 					</div>
+					<div
+						className="grid-item-info-btn"
+						onClick={(event) => {
+							event.stopPropagation();
+							onShowSource(asset);
+						}}
+					/>
 				</button>
 			</Draggable>
 			{/* <span className="grid-item-label">{asset.name}</span> */}

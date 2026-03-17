@@ -1,5 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
+body {
+	--bg-color-modal: var(--framer-color-bg);
+}
+
+body[data-framer-theme="dark"] {
+	--bg-color-modal: #181818;
+}
+
 main {
 	display: flex;
 	flex-direction: column;
@@ -101,6 +109,23 @@ main {
 	background-color: var(--framer-color-bg-tertiary);
 }
 
+.grid-item-info-btn {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+	width: 20px;
+	height: 20px;
+	backdrop-filter: blur(5px);
+	transition: opacity 0.15s;
+	opacity: 0;
+}
+
+.grid-item-btn:hover .grid-item-info-btn {
+	opacity: 1;
+}
+
 .grid-item-overlay {
 	position: absolute;
 	inset: 0;
@@ -142,4 +167,62 @@ main {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+}
+
+.modal-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px;
+}
+
+.modal-backdrop {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: var(--framer-color-bg);
+	opacity: 0.5;
+}
+
+.modal {
+	width: 100%;
+	padding: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	border-radius: 15px;
+	background-color: var(--bg-color-modal);
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 30px 0px;
+	position: relative;
+}
+
+.modal-title {
+	color: var(--framer-color-text);
+	font-weight: 600;
+}
+
+.modal-image {
+	aspect-ratio: 1;
+	width: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+.modal-content {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.modal a {
+	width: fit-content;
 }

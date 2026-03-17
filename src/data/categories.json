@@ -5,14 +5,35 @@
 	},
 	"metallic": {
 		"name": "Metallic",
-		"assetGroups": ["3d-chroma-shapes", "metallic-abstract-3d-shapes", "assetpro-metallic"]
+		"assetGroups": ["metallic-abstract-3d-shapes", "assetpro-metallic", "3d-chroma-shapes"]
 	},
 	"iridescent": {
 		"name": "Iridescent",
-		"assetGroups": ["liquid-abstract-shapes", "assetpro-iridescent", "abstract-3d-shapes"]
+		"assetGroups": [
+			"liquid-abstract-shapes-iridescent",
+			"assetpro-iridescent",
+			"abstract-3d-shapes"
+		]
 	},
-	"other": {
-		"name": "Other",
-		"assetGroups": ["assetpro-other"]
+	"blue": {
+		"name": "Blue",
+		"assetGroups": [
+			"saas-website-kit-blue",
+			"assetpro-blue",
+			"abstract-3d-shapes-blue",
+			"liquid-abstract-shapes-blue"
+		]
+	},
+	"pink": {
+		"name": "Pink",
+		"assetGroups": ["saas-website-kit-pink", "abstract-3d-shapes-pink", "assetpro-pink"]
+	},
+	"black": {
+		"name": "Black",
+		"assetGroups": ["ai-startup-kit", "assetpro-black"]
+	},
+	"miscellaneous": {
+		"name": "Miscellaneous",
+		"assetGroups": ["assetpro-other", "abstract-3d-shapes-other"]
 	}
 }

@@ -1,0 +1,66 @@
+{
+	"airnauts-3d-shapes": {
+		"colorizable": true,
+		"source": "airnauts-3d-shapes"
+	},
+	"3d-chroma-shapes": {
+		"colorizable": false,
+		"source": "3d-chroma-shapes"
+	},
+	"liquid-abstract-shapes-iridescent": {
+		"colorizable": false,
+		"source": "liquid-abstract-shapes"
+	},
+	"liquid-abstract-shapes-blue": {
+		"colorizable": false,
+		"source": "liquid-abstract-shapes"
+	},
+	"assetpro-clay": {
+		"colorizable": true,
+		"source": "assetpro-3d-shapes"
+	},
+	"assetpro-iridescent": {
+		"colorizable": false,
+		"source": "assetpro-3d-shapes"
+	},
+	"assetpro-pink": {
+		"colorizable": false,
+		"source": "assetpro-3d-shapes"
+	},
+	"assetpro-other": {
+		"colorizable": false,
+		"source": "assetpro-3d-shapes"
+	},
+	"assetpro-black": {
+		"colorizable": false,
+		"source": "assetpro-3d-shapes"
+	},
+	"abstract-3d-shapes-pink": {
+		"colorizable": false,
+		"source": "abstract-3d-shapes"
+	},
+	"abstract-3d-shapes-blue": {
+		"colorizable": false,
+		"source": "abstract-3d-shapes"
+	},
+	"abstract-3d-shapes-other": {
+		"colorizable": false,
+		"source": "abstract-3d-shapes"
+	},
+	"metallic-abstract-3d-shapes": {
+		"colorizable": true,
+		"source": "abstract-3d-shapes-metallic"
+	},
+	"ai-startup-kit": {
+		"colorizable": false,
+		"source": "ai-startup-kit-elements"
+	},
+	"saas-website-kit-pink": {
+		"colorizable": false,
+		"source": "saas-website-kit-blocks"
+	},
+	"saas-website-kit-blue": {
+		"colorizable": false,
+		"source": "saas-website-kit-blocks"
+	}
+}

@@ -84,17 +84,21 @@ main {
 	width: 100%;
 	aspect-ratio: 1;
 	cursor: pointer;
-	background-size: cover;
+	background-size: contain;
 	background-position: center;
+	background-repeat: no-repeat;
 	position: relative;
 	border-radius: 0.5rem;
 	flex-shrink: 0;
 	height: auto;
-	background-color: var(--framer-color-bg-tertiary);
 }
 
 [data-framer-theme="dark"] .grid-item-btn {
 	background-color: var(--framer-color-bg-secondary);
+}
+
+[data-framer-theme="dark"] .grid-item-btn:hover {
+	background-color: var(--framer-color-bg-tertiary);
 }
 
 .grid-item-overlay {

@@ -1,4 +1,4 @@
-import { Draggable, framer, useIsAllowedTo } from "framer-plugin";
+import { Draggable, framer, type ImageAsset, useIsAllowedTo } from "framer-plugin";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdminUI from "./AdminUI";
 import assetsData from "./data/assets.json";
@@ -191,7 +191,7 @@ const PhotosList = memo(function PhotosList({
 	query: string;
 	categoryId: string;
 }) {
-	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage");
+	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
 	const { data, fetchNextPage, hasNextPage } = useAssetsInfinite(query, categoryId);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const previousWindowHeightRef = useRef(window.innerHeight);
@@ -221,11 +221,26 @@ const PhotosList = memo(function PhotosList({
 		setLoadingId(asset.id);
 		try {
 			if (IS_CANVAS) {
-				await framer.addImage({
+				// In canvas mode, update the existing image if there is one, otherwise add a new image
+				let currentImage: ImageAsset | null = null;
+				try {
+					// This is only available in canvas mode
+					currentImage = await framer.getImage();
+				} catch {
+					console.error("Failed to get current image");
+				}
+
+				const imageData = {
 					image: asset.url,
 					name: asset.name,
 					altText: asset.name,
-				});
+				};
+
+				if (currentImage) {
+					await framer.setImage(imageData);
+				} else {
+					await framer.addImage(imageData);
+				}
 			} else {
 				await framer.setImage({
 					image: asset.url,

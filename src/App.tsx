@@ -16,6 +16,10 @@ const isLocalhost =
 const PAGE_SIZE = 24;
 const IS_CANVAS = framer.mode === "canvas";
 
+const LICENSE_URLS = {
+	"CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/",
+};
+
 void framer.showUI({
 	position: "top right",
 	width: IS_CANVAS ? 260 : 600,
@@ -376,7 +380,22 @@ function AssetPicker() {
 								</a>{" "}
 								by {modalContent.authorName}
 							</p>
-							{modalContent.license && <p>License: {modalContent.license}</p>}
+							{modalContent.license && (
+								<p>
+									License:{" "}
+									{LICENSE_URLS[modalContent.license] ? (
+										<a
+											href={LICENSE_URLS[modalContent.license]}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{modalContent.license}
+										</a>
+									) : (
+										modalContent.license
+									)}
+								</p>
+							)}
 						</div>
 						<button onClick={() => setShowModal(false)}>OK</button>
 					</div>

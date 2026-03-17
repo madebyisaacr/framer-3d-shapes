@@ -12,15 +12,16 @@ const isLocalhost =
 	(window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
 const PAGE_SIZE = 24;
+const IS_CANVAS = framer.mode === "canvas";
 
 void framer.showUI({
 	position: "top right",
-	width: framer.mode === "canvas" ? 260 : 600,
-	minWidth: framer.mode === "canvas" ? 260 : 600,
+	width: IS_CANVAS ? 260 : 600,
+	minWidth: IS_CANVAS ? 260 : 600,
 	maxWidth: 750,
-	height: 450,
+	height: IS_CANVAS ? 450 : 600,
 	minHeight: 400,
-	resizable: framer.mode === "canvas",
+	resizable: IS_CANVAS,
 });
 
 type AssetImage = { id: string; name: string; url: string; assetGroupId: string };
@@ -219,7 +220,7 @@ const PhotosList = memo(function PhotosList({
 	const addAsset = useCallback(async (asset: AssetImage) => {
 		setLoadingId(asset.id);
 		try {
-			if (framer.mode === "canvas") {
+			if (IS_CANVAS) {
 				await framer.addImage({
 					image: asset.url,
 					name: asset.name,
@@ -271,7 +272,7 @@ const PhotosList = memo(function PhotosList({
 
 	return (
 		<div className="scroll-container no-scrollbar" ref={scrollRef} onScroll={handleScroll}>
-			<div className={`assets-grid ${framer.mode === "canvas" ? "canvas" : "image"}`}>
+			<div className={`assets-grid ${IS_CANVAS ? "canvas" : "image"}`}>
 				{flatAssets.map((asset) => (
 					<GridItem
 						key={asset.id}

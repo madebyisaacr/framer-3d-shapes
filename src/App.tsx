@@ -130,10 +130,11 @@ function showAssetContextMenu(opts: {
 	location: { x: number; y: number };
 	isInsertEnabled: boolean;
 	onInsert: () => void;
+	onDownload?: () => void;
 	onInfo: () => void;
 	showInfo?: boolean;
 }) {
-	const { asset, location, isInsertEnabled, onInsert, onInfo, showInfo = true } = opts;
+	const { asset, location, isInsertEnabled, onInsert, onDownload, onInfo, showInfo = true } = opts;
 	void framer.showContextMenu(
 		[
 			{
@@ -147,6 +148,10 @@ function showAssetContextMenu(opts: {
 			{
 				label: "Download",
 				onAction: () => {
+					if (onDownload) {
+						onDownload();
+						return;
+					}
 					void downloadAssetUrl(asset.url, asset.name);
 				},
 			},
@@ -454,6 +459,7 @@ const PhotosList = memo(function PhotosList({
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const previousWindowHeightRef = useRef(window.innerHeight);
 	const [loadingId, setLoadingId] = useState<AssetId | null>(null);
+	const [downloadingId, setDownloadingId] = useState<AssetId | null>(null);
 
 	const handleScroll = useCallback(() => {
 		const scrollElement = scrollRef.current;
@@ -511,6 +517,15 @@ const PhotosList = memo(function PhotosList({
 		}
 	}, []);
 
+	const downloadAsset = useCallback(async (asset: AssetImage) => {
+		setDownloadingId(asset.id);
+		try {
+			await downloadAssetUrl(asset.url, asset.name);
+		} finally {
+			setDownloadingId(null);
+		}
+	}, []);
+
 	useEffect(() => {
 		const el = scrollRef.current;
 		if (el) el.scrollTop = 0;
@@ -549,8 +564,9 @@ const PhotosList = memo(function PhotosList({
 					<GridItem
 						key={asset.id}
 						asset={asset}
-						loading={loadingId === asset.id}
+						loading={loadingId === asset.id || downloadingId === asset.id}
 						onSelect={addAsset}
+						onDownload={downloadAsset}
 						isAllowedToUpsertImage={isAllowedToUpsertImage}
 						onShowSource={onShowSource}
 					/>
@@ -564,6 +580,7 @@ interface GridItemProps {
 	asset: AssetImage;
 	loading: boolean;
 	onSelect: (asset: AssetImage) => void;
+	onDownload: (asset: AssetImage) => void;
 	isAllowedToUpsertImage: boolean;
 	onShowSource: (asset: AssetImage) => void;
 }
@@ -572,12 +589,17 @@ const GridItem = memo(function GridItem({
 	asset,
 	loading,
 	onSelect,
+	onDownload,
 	isAllowedToUpsertImage,
 	onShowSource,
 }: GridItemProps) {
 	const handleClick = useCallback(() => {
 		onSelect(asset);
 	}, [onSelect, asset]);
+
+	const handleDownload = useCallback(() => {
+		onDownload(asset);
+	}, [onDownload, asset]);
 
 	const handleContextMenu = useCallback(
 		(event: React.MouseEvent) => {
@@ -588,10 +610,11 @@ const GridItem = memo(function GridItem({
 				location: { x: event.clientX, y: event.clientY },
 				isInsertEnabled: isAllowedToUpsertImage && !loading,
 				onInsert: handleClick,
+				onDownload: handleDownload,
 				onInfo: () => onShowSource(asset),
 			});
 		},
-		[asset, handleClick, isAllowedToUpsertImage, loading, onShowSource]
+		[asset, handleClick, handleDownload, isAllowedToUpsertImage, loading, onShowSource]
 	);
 
 	return (

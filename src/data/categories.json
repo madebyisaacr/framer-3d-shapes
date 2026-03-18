@@ -9,7 +9,12 @@
 	},
 	"iridescent": {
 		"name": "Iridescent",
-		"groupOrder": ["liquid-abstract-shapes", "assetpro-3d-shapes", "abstract-3d-shapes"]
+		"groupOrder": [
+			"liquid-abstract-shapes",
+			"assetpro-3d-shapes",
+			"abstract-3d-shapes",
+			"iridescent-abstract-3d-shapes"
+		]
 	},
 	"black": {
 		"name": "Black",
@@ -30,6 +35,12 @@
 	},
 	"other": {
 		"name": "Miscellaneous",
-		"groupOrder": ["assetpro-3d-shapes", "abstract-3d-shapes", "framer-plugins"]
+		"groupOrder": [
+			"assetpro-3d-shapes",
+			"abstract-3d-shapes",
+			"framer-plugins",
+			"brut-hyperrealism",
+			"3d-asset-library"
+		]
 	}
 }

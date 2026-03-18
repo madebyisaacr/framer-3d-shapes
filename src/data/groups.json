@@ -53,5 +53,23 @@
 		"authorName": "Framer",
 		"license": "MIT",
 		"licenseUrl": "https://github.com/framer/plugins/blob/main/LICENSE"
+	},
+	"brut-hyperrealism": {
+		"source": "https://www.figma.com/community/file/1078279005212606109",
+		"sourceTitle": "Brut - Hyperrealism illustration",
+		"authorName": "Vincent",
+		"license": "CC BY 4.0"
+	},
+	"3d-asset-library": {
+		"source": "https://www.figma.com/community/file/1232351579083761125",
+		"sourceTitle": "3D Asset Library",
+		"authorName": "Ozenua Oluwatobi and Rvysion",
+		"license": "CC BY 4.0"
+	},
+	"iridescent-abstract-3d-shapes": {
+		"source": "https://www.figma.com/community/file/1322980420112735389/15-iridescent-abstract-3d-shapes-pack",
+		"sourceTitle": "15 iridescent abstract 3d shapes pack",
+		"authorName": "Maxim Kuznetsov",
+		"license": "CC BY 4.0"
 	}
 }

@@ -96,7 +96,7 @@ main {
 	background-position: center;
 	background-repeat: no-repeat;
 	position: relative;
-	border-radius: 0.5rem;
+	border-radius: 8px;
 	flex-shrink: 0;
 	height: auto;
 }
@@ -252,6 +252,26 @@ main {
 	width: 100%;
 	object-fit: contain;
 	object-position: center;
+}
+
+.modal-image-wrap {
+	position: relative;
+	aspect-ratio: 1;
+	width: 100%;
+}
+
+.modal-image-overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	border-radius: 8px;
+}
+
+.modal-image-overlay.loading {
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-image.canvas {

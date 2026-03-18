@@ -287,6 +287,7 @@ function AssetPicker() {
 	const [modalContent, setModalContent] = useState<SourceEntry | null>(null);
 	const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
 	const [modalAsset, setModalAsset] = useState<AssetImage | null>(null);
+	const [modalDownloading, setModalDownloading] = useState(false);
 	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
 
 	useEffect(() => {
@@ -343,6 +344,16 @@ function AssetPicker() {
 		}
 	}, [isAllowedToUpsertImage, modalAsset]);
 
+	const handleDownloadFromModal = useCallback(async () => {
+		if (!modalAsset) return;
+		setModalDownloading(true);
+		try {
+			await downloadAssetUrl(modalAsset.url, modalAsset.name);
+		} finally {
+			setModalDownloading(false);
+		}
+	}, [modalAsset]);
+
 	const handleModalContextMenu = useCallback(
 		(event: React.MouseEvent) => {
 			if (!modalAsset) return;
@@ -353,11 +364,18 @@ function AssetPicker() {
 				location: { x: event.clientX, y: event.clientY },
 				isInsertEnabled: isAllowedToUpsertImage,
 				onInsert: () => void handleInsertFromModal(),
+				onDownload: () => void handleDownloadFromModal(),
 				onInfo: () => handleShowSource(modalAsset),
 				showInfo: false,
 			});
 		},
-		[handleInsertFromModal, handleShowSource, isAllowedToUpsertImage, modalAsset]
+		[
+			handleDownloadFromModal,
+			handleInsertFromModal,
+			handleShowSource,
+			isAllowedToUpsertImage,
+			modalAsset,
+		]
 	);
 
 	return (
@@ -402,13 +420,21 @@ function AssetPicker() {
 										name: modalAsset?.name ?? modalContent.sourceTitle,
 									}}
 								>
-									<img
-										className="modal-image"
-										src={normalizeFramerImageUrl(modalImageUrl)}
-										alt={modalAsset?.name ?? modalContent.sourceTitle}
-										draggable={false}
-										onContextMenu={handleModalContextMenu}
-									/>
+									<div className="modal-image-wrap" onContextMenu={handleModalContextMenu}>
+										<img
+											className="modal-image"
+											src={normalizeFramerImageUrl(modalImageUrl)}
+											alt={modalAsset?.name ?? modalContent.sourceTitle}
+											draggable={false}
+										/>
+										<div className={`modal-image-overlay ${modalDownloading ? "loading" : ""}`}>
+											<div
+												className={`framer-spinner image-spinner ${
+													modalDownloading ? "is-visible" : ""
+												}`}
+											/>
+										</div>
+									</div>
 								</Draggable>
 							)}
 							<p className="modal-title">Source</p>

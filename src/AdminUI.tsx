@@ -1,18 +1,6 @@
 import { framer, isBreakpoint, isFrameNode } from "framer-plugin";
 import { copyToClipboard } from "./utils";
 
-const minWindowWidth = framer.mode === "canvas" ? 260 : 600;
-const resizable = framer.mode === "canvas";
-
-void framer.showUI({
-	position: "top right",
-	width: minWindowWidth,
-	minWidth: minWindowWidth,
-	maxWidth: 750,
-	minHeight: 400,
-	resizable,
-});
-
 export default function AdminUI() {
 	const getImageData = async () => {
 		const selection = await framer.getSelection();

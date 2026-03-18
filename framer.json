@@ -1,6 +1,6 @@
 {
 	"id": "3dShps",
-	"name": "Abstract 3D Shapes",
+	"name": "3D Shapes",
 	"modes": ["canvas", "image"],
 	"icon": "/icon.png"
 }

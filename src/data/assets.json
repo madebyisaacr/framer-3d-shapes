@@ -1,6 +1,16 @@
 {
 	"airnauts-3d-shapes": [
 		{
+			"name": "Wavy sphere",
+			"url": "https://framerusercontent.com/images/0xmNL9olDMGyMyybyB40fV067cs.png",
+			"category": "clay"
+		},
+		{
+			"name": "Cube of spheres",
+			"url": "https://framerusercontent.com/images/BxNSJ85wbQ2MGDuAhGiVD05CMcU.png",
+			"category": "clay"
+		},
+		{
 			"name": "Spiral 1",
 			"url": "https://framerusercontent.com/images/MQ4EqETKSTljME8N8YoYBx6aMA.png",
 			"category": "clay"
@@ -81,11 +91,6 @@
 			"category": "clay"
 		},
 		{
-			"name": "Cube of spheres",
-			"url": "https://framerusercontent.com/images/BxNSJ85wbQ2MGDuAhGiVD05CMcU.png",
-			"category": "clay"
-		},
-		{
 			"name": "Shape-6",
 			"url": "https://framerusercontent.com/images/SneoZpEincNPYYkwSyxpTLpa8.png",
 			"category": "clay"
@@ -93,11 +98,6 @@
 		{
 			"name": "Shape-12",
 			"url": "https://framerusercontent.com/images/iQuLNnnBcDcqM08aQnXQuVYEwKY.png",
-			"category": "clay"
-		},
-		{
-			"name": "Wavy sphere",
-			"url": "https://framerusercontent.com/images/0xmNL9olDMGyMyybyB40fV067cs.png",
 			"category": "clay"
 		}
 	],
@@ -721,6 +721,31 @@
 	],
 	"metallic-abstract-3d-shapes": [
 		{
+			"name": "13",
+			"url": "https://framerusercontent.com/images/1gXxg2YqabOuwmpTg2dCykXaClA.png",
+			"category": "metallic"
+		},
+		{
+			"name": "14",
+			"url": "https://framerusercontent.com/images/VKuJMkxLsp7MJHYqAJiZK3PwQt0.png",
+			"category": "metallic"
+		},
+		{
+			"name": "20",
+			"url": "https://framerusercontent.com/images/WNU9flnKCR6hPWrn5xdA28uh6is.png",
+			"category": "metallic"
+		},
+		{
+			"name": "22",
+			"url": "https://framerusercontent.com/images/eYBAFCvrUNxX28jyEfGfCFf0iI.png",
+			"category": "metallic"
+		},
+		{
+			"name": "23",
+			"url": "https://framerusercontent.com/images/u7bfZskJ863lk7JhBsYc1tFJZI.png",
+			"category": "metallic"
+		},
+		{
 			"name": "1",
 			"url": "https://framerusercontent.com/images/DQ46Xi4Q2YgsJcJRxzKYSv7wY.png",
 			"category": "metallic"
@@ -781,43 +806,18 @@
 			"category": "metallic"
 		},
 		{
-			"name": "13",
-			"url": "https://framerusercontent.com/images/1gXxg2YqabOuwmpTg2dCykXaClA.png",
-			"category": "metallic"
-		},
-		{
-			"name": "14",
-			"url": "https://framerusercontent.com/images/VKuJMkxLsp7MJHYqAJiZK3PwQt0.png",
-			"category": "metallic"
-		},
-		{
-			"name": "16",
-			"url": "https://framerusercontent.com/images/mMCfwjSkS87WcNs4cUljQPYVBUQ.png",
-			"category": "metallic"
-		},
-		{
 			"name": "17",
 			"url": "https://framerusercontent.com/images/RqssleBntJccsCD3dfXiirY7k.png",
 			"category": "metallic"
 		},
 		{
-			"name": "20",
-			"url": "https://framerusercontent.com/images/WNU9flnKCR6hPWrn5xdA28uh6is.png",
-			"category": "metallic"
-		},
-		{
-			"name": "22",
-			"url": "https://framerusercontent.com/images/eYBAFCvrUNxX28jyEfGfCFf0iI.png",
-			"category": "metallic"
-		},
-		{
-			"name": "23",
-			"url": "https://framerusercontent.com/images/u7bfZskJ863lk7JhBsYc1tFJZI.png",
-			"category": "metallic"
-		},
-		{
 			"name": "24",
 			"url": "https://framerusercontent.com/images/0xmAIU1GRkZySUlk7SesCNoEfI.png",
+			"category": "metallic"
+		},
+		{
+			"name": "16",
+			"url": "https://framerusercontent.com/images/mMCfwjSkS87WcNs4cUljQPYVBUQ.png",
 			"category": "metallic"
 		},
 		{

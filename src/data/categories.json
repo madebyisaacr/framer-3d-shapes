@@ -5,7 +5,7 @@
 	},
 	"metallic": {
 		"name": "Metallic",
-		"groupOrder": ["metallic-abstract-3d-shapes", "assetpro-3d-shapes", "3d-chroma-shapes"]
+		"groupOrder": ["assetpro-3d-shapes", "metallic-abstract-3d-shapes", "3d-chroma-shapes"]
 	},
 	"iridescent": {
 		"name": "Iridescent",

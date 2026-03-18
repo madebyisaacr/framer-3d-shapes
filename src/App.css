@@ -56,8 +56,8 @@ main {
 	overflow: auto;
 	position: relative;
 	flex: 1;
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
 	padding-bottom: 15px;
 }
 
@@ -96,7 +96,7 @@ main {
 	background-position: center;
 	background-repeat: no-repeat;
 	position: relative;
-	border-radius: 8px;
+	border-radius: 10px;
 	flex-shrink: 0;
 	height: auto;
 }
@@ -267,7 +267,7 @@ main {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
-	border-radius: 8px;
+	border-radius: 10px;
 }
 
 .modal-image-overlay.loading {

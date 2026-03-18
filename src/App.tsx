@@ -640,7 +640,7 @@ const GridItem = memo(function GridItem({
 					title={isAllowedToUpsertImage ? undefined : "Insufficient permissions"}
 				>
 					<div className={`grid-item-overlay ${loading ? "loading" : ""}`}>
-						{loading && <div className="spinner" />}
+						<div className={`framer-spinner image-spinner ${loading ? "is-visible" : ""}`} />
 					</div>
 					<div
 						className="grid-item-info-btn"

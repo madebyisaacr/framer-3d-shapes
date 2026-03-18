@@ -4,7 +4,6 @@ import AdminUI from "./AdminUI";
 import assetsData from "./data/assets.json";
 import categoriesData from "./data/categories.json";
 import groupsData from "./data/groups.json";
-import sourcesData from "./data/sources.json";
 // import { SearchIcon } from "./icons";
 import { normalizeFramerImageUrl } from "./utils";
 import "./App.css";
@@ -16,7 +15,7 @@ const isLocalhost =
 const PAGE_SIZE = 24;
 const IS_CANVAS = framer.mode === "canvas";
 
-const LICENSE_URLS = {
+const LICENSE_URLS: Record<string, string> = {
 	"CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/",
 };
 
@@ -31,9 +30,12 @@ void framer.showUI({
 	resizable: IS_CANVAS,
 });
 
-type AssetImage = { id: string; name: string; url: string; assetGroupId: string };
+type AssetImage = { id: string; name: string; url: string; assetGroupId: string; category: string };
 
-const dataByCategory = assetsData as Record<string, Array<{ name: string; url: string }>>;
+const dataByCategory = assetsData as Record<
+	string,
+	Array<{ name: string; url: string; category?: string }>
+>;
 const allAssets: AssetImage[] = [];
 for (const [assetGroupId, items] of Object.entries(dataByCategory)) {
 	if (!Array.isArray(items)) continue;
@@ -43,31 +45,25 @@ for (const [assetGroupId, items] of Object.entries(dataByCategory)) {
 			name: item.name,
 			url: item.url,
 			assetGroupId,
+			category: item.category ?? "",
 		});
 	});
 }
 
-type CategoryEntry = { name: string; assetGroups: string[] };
+type CategoryEntry = { name: string; groupOrder?: string[] };
 const categoriesDataTyped = categoriesData as Record<string, CategoryEntry>;
-type GroupEntry = { colorizable: boolean; source: string };
 type SourceEntry = {
 	source: string;
 	sourceTitle: string;
 	authorName: string;
 	license?: string | null;
+	licenseUrl?: string | null;
 };
-const groupsDataTyped = groupsData as Record<string, GroupEntry>;
-const sourcesDataTyped = sourcesData as Record<string, SourceEntry>;
+const groupsDataTyped = groupsData as Record<string, SourceEntry>;
 const categoriesList = Object.entries(categoriesDataTyped).map(([id, entry]) => ({
 	value: id,
 	label: entry.name,
 }));
-const assetGroupToCategory = new Map<string, string>();
-for (const [catId, entry] of Object.entries(categoriesDataTyped)) {
-	for (const groupId of entry.assetGroups) {
-		assetGroupToCategory.set(groupId, catId);
-	}
-}
 
 const CATEGORY_STORAGE_KEY = "framer-3d-shapes-category";
 const validCategoryIds = new Set(["", ...Object.keys(categoriesDataTyped)]);
@@ -196,16 +192,28 @@ function filterAssetsByCategory(assets: AssetImage[], categoryId: string): Asset
 			);
 	}
 	const category = categoriesDataTyped[categoryId];
-	if (!category) return assets;
-
 	const groupOrder = new Map<string, number>();
-	category.assetGroups.forEach((groupId, index) => {
+	(category?.groupOrder ?? []).forEach((groupId, index) => {
 		groupOrder.set(groupId, index);
 	});
 
 	return assets
-		.filter((a) => groupOrder.has(a.assetGroupId))
-		.sort((a, b) => (groupOrder.get(a.assetGroupId) ?? 0) - (groupOrder.get(b.assetGroupId) ?? 0));
+		.filter((a) => a.category === categoryId)
+		.sort((a, b) => {
+			const aOrder = groupOrder.get(a.assetGroupId);
+			const bOrder = groupOrder.get(b.assetGroupId);
+
+			// Put explicitly ordered groups first, in declared order.
+			if (aOrder !== undefined && bOrder !== undefined) return aOrder - bOrder;
+			if (aOrder !== undefined) return -1;
+			if (bOrder !== undefined) return 1;
+
+			// For groups not in groupOrder, keep a deterministic order at the end.
+			return (
+				(randomizedGroupOrder.get(a.assetGroupId) ?? Number.MAX_SAFE_INTEGER) -
+				(randomizedGroupOrder.get(b.assetGroupId) ?? Number.MAX_SAFE_INTEGER)
+			);
+		});
 }
 
 function useAssetsInfinite(query: string, categoryId: string) {
@@ -287,9 +295,7 @@ function AssetPicker() {
 	const debouncedQuery = useDebounce(query, 200);
 
 	const handleShowSource = useCallback((asset: AssetImage) => {
-		const group = groupsDataTyped[asset.assetGroupId];
-		if (!group) return;
-		const source = sourcesDataTyped[group.source];
+		const source = groupsDataTyped[asset.assetGroupId];
 		if (!source) return;
 		setModalContent(source);
 		setModalImageUrl(asset.url);
@@ -410,9 +416,9 @@ function AssetPicker() {
 							{modalContent.license && (
 								<p>
 									License:{" "}
-									{LICENSE_URLS[modalContent.license] ? (
+									{modalContent.licenseUrl || LICENSE_URLS[modalContent.license] ? (
 										<a
-											href={LICENSE_URLS[modalContent.license]}
+											href={modalContent.licenseUrl || LICENSE_URLS[modalContent.license]}
 											target="_blank"
 											rel="noopener noreferrer"
 										>

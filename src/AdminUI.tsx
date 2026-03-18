@@ -60,13 +60,21 @@ export default function AdminUI() {
 			if (!primaryBreakpoint) continue;
 
 			const breakpointChildren = await primaryBreakpoint.getChildren();
-			const frames = breakpointChildren.filter(isFrameNode);
-			for (const frame of frames) {
-				if (!frame.backgroundImage?.url) continue;
-				pageImages.push({
-					name: frame.name,
-					url: frame.backgroundImage?.url,
-				});
+
+			for (const sectionFrame of breakpointChildren.filter(isFrameNode)) {
+				const category = sectionFrame.name;
+
+				const sectionChildren = await sectionFrame.getChildren();
+				const frames = sectionChildren.filter(isFrameNode);
+
+				for (const frame of frames) {
+					if (!frame.backgroundImage?.url) continue;
+					pageImages.push({
+						name: frame.name,
+						url: frame.backgroundImage?.url,
+						category,
+					});
+				}
 			}
 
 			if (pageImages.length > 0) {

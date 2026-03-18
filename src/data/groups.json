@@ -1,66 +1,57 @@
 {
 	"airnauts-3d-shapes": {
-		"colorizable": true,
-		"source": "airnauts-3d-shapes"
+		"source": "https://www.figma.com/community/file/1042398174464660061",
+		"sourceTitle": "20 FREE Shapes 3D Airnauts",
+		"authorName": "Nikita",
+		"license": "CC BY 4.0"
 	},
 	"3d-chroma-shapes": {
-		"colorizable": false,
-		"source": "3d-chroma-shapes"
+		"source": "https://www.figma.com/community/file/1417056400529136825",
+		"sourceTitle": "FREE CHROME 3D Shapes by assetpro.design",
+		"authorName": "Matt Hadwiczak",
+		"license": "CC BY 4.0"
 	},
-	"liquid-abstract-shapes-iridescent": {
-		"colorizable": false,
-		"source": "liquid-abstract-shapes"
+	"liquid-abstract-shapes": {
+		"source": "https://www.figma.com/community/file/1106207129726694107",
+		"sourceTitle": "Abstract shapes (liquid 2)",
+		"authorName": "Кристина",
+		"license": "CC BY 4.0"
 	},
-	"liquid-abstract-shapes-blue": {
-		"colorizable": false,
-		"source": "liquid-abstract-shapes"
+	"assetpro-3d-shapes": {
+		"source": "https://www.figma.com/community/file/1353791708785111510/free-3d-shapes-by-assetpro-design",
+		"sourceTitle": "FREE 3D Shapes by assetpro.design",
+		"authorName": "Matt Hadwiczak",
+		"license": "CC BY 4.0"
 	},
-	"assetpro-clay": {
-		"colorizable": true,
-		"source": "assetpro-3d-shapes"
-	},
-	"assetpro-iridescent": {
-		"colorizable": false,
-		"source": "assetpro-3d-shapes"
-	},
-	"assetpro-pink": {
-		"colorizable": false,
-		"source": "assetpro-3d-shapes"
-	},
-	"assetpro-other": {
-		"colorizable": false,
-		"source": "assetpro-3d-shapes"
-	},
-	"assetpro-black": {
-		"colorizable": false,
-		"source": "assetpro-3d-shapes"
-	},
-	"abstract-3d-shapes-pink": {
-		"colorizable": false,
-		"source": "abstract-3d-shapes"
-	},
-	"abstract-3d-shapes-blue": {
-		"colorizable": false,
-		"source": "abstract-3d-shapes"
-	},
-	"abstract-3d-shapes-other": {
-		"colorizable": false,
-		"source": "abstract-3d-shapes"
+	"abstract-3d-shapes": {
+		"source": "https://www.figma.com/community/file/1092431047678134762/abstract-3d-shapes",
+		"sourceTitle": "Abstract 3D shapes",
+		"authorName": "Кристина",
+		"license": "CC BY 4.0"
 	},
 	"metallic-abstract-3d-shapes": {
-		"colorizable": true,
-		"source": "abstract-3d-shapes-metallic"
+		"source": "https://www.figma.com/community/file/1092434443379886572",
+		"sourceTitle": "Abstract 3D shapes (metallic)",
+		"authorName": "Кристина",
+		"license": "CC BY 4.0"
 	},
 	"ai-startup-kit": {
-		"colorizable": false,
-		"source": "ai-startup-kit-elements"
+		"source": "https://www.framer.com/marketplace/templates/elements/",
+		"sourceTitle": "Elements",
+		"authorName": "Framer",
+		"license": null
 	},
-	"saas-website-kit-pink": {
-		"colorizable": false,
-		"source": "saas-website-kit-blocks"
+	"saas-website-kit": {
+		"source": "https://www.framer.com/marketplace/templates/blocks/",
+		"sourceTitle": "Blocks",
+		"authorName": "Framer",
+		"license": null
 	},
-	"saas-website-kit-blue": {
-		"colorizable": false,
-		"source": "saas-website-kit-blocks"
+	"framer-plugins": {
+		"source": "https://github.com/framer/plugins",
+		"sourceTitle": "framer/plugins",
+		"authorName": "Framer",
+		"license": "MIT",
+		"licenseUrl": "https://github.com/framer/plugins/blob/main/LICENSE"
 	}
 }

@@ -1,39 +1,35 @@
 {
 	"clay": {
 		"name": "Clay",
-		"assetGroups": ["airnauts-3d-shapes", "assetpro-clay"]
+		"groupOrder": ["airnauts-3d-shapes", "assetpro-3d-shapes"]
 	},
 	"metallic": {
 		"name": "Metallic",
-		"assetGroups": ["metallic-abstract-3d-shapes", "assetpro-metallic", "3d-chroma-shapes"]
+		"groupOrder": ["metallic-abstract-3d-shapes", "assetpro-3d-shapes", "3d-chroma-shapes"]
 	},
 	"iridescent": {
 		"name": "Iridescent",
-		"assetGroups": [
-			"liquid-abstract-shapes-iridescent",
-			"assetpro-iridescent",
-			"abstract-3d-shapes"
-		]
+		"groupOrder": ["liquid-abstract-shapes", "assetpro-3d-shapes", "abstract-3d-shapes"]
+	},
+	"black": {
+		"name": "Black",
+		"groupOrder": ["ai-startup-kit", "assetpro-3d-shapes", "framer-plugins"]
 	},
 	"blue": {
 		"name": "Blue",
-		"assetGroups": [
-			"saas-website-kit-blue",
-			"assetpro-blue",
-			"abstract-3d-shapes-blue",
-			"liquid-abstract-shapes-blue"
+		"groupOrder": [
+			"saas-website-kit",
+			"assetpro-3d-shapes",
+			"abstract-3d-shapes",
+			"liquid-abstract-shapes"
 		]
 	},
 	"pink": {
 		"name": "Pink",
-		"assetGroups": ["saas-website-kit-pink", "abstract-3d-shapes-pink", "assetpro-pink"]
+		"groupOrder": ["saas-website-kit", "abstract-3d-shapes", "assetpro-3d-shapes"]
 	},
-	"black": {
-		"name": "Black",
-		"assetGroups": ["ai-startup-kit", "assetpro-black"]
-	},
-	"miscellaneous": {
+	"other": {
 		"name": "Miscellaneous",
-		"assetGroups": ["assetpro-other", "abstract-3d-shapes-other"]
+		"groupOrder": ["assetpro-3d-shapes", "abstract-3d-shapes", "framer-plugins"]
 	}
 }

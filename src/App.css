@@ -155,12 +155,6 @@ main {
 	opacity: 1;
 }
 
-@keyframes spin {
-	to {
-		transform: rotate(360deg);
-	}
-}
-
 .grid-item-label {
 	font-size: 9px;
 	color: var(--framer-color-text-tertiary);

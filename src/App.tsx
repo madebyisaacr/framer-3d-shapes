@@ -8,12 +8,11 @@ import groupsData from "./data/groups.json";
 import { normalizeFramerImageUrl } from "./utils";
 import "./App.css";
 
-const isLocalhost =
-	typeof window !== "undefined" &&
-	(window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-
 const PAGE_SIZE = 24;
 const IS_CANVAS = framer.mode === "canvas";
+const IS_LOCALHOST =
+	typeof window !== "undefined" &&
+	(window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
 const LICENSE_URLS: Record<string, string> = {
 	"CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/",
@@ -265,7 +264,7 @@ export function App() {
 	const [showAdminUI, setShowAdminUI] = useState(false);
 
 	useEffect(() => {
-		if (!isLocalhost) {
+		if (!IS_LOCALHOST) {
 			void framer.setMenu([]);
 			return;
 		}
@@ -277,7 +276,7 @@ export function App() {
 		]);
 	}, [showAdminUI]);
 
-	return isLocalhost && showAdminUI ? <AdminUI /> : <AssetPicker />;
+	return IS_LOCALHOST && showAdminUI ? <AdminUI /> : <AssetPicker />;
 }
 
 function AssetPicker() {

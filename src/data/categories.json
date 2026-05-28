@@ -18,7 +18,7 @@
 	},
 	"black": {
 		"name": "Black",
-		"groupOrder": ["ai-startup-kit", "assetpro-3d-shapes", "framer-plugins"]
+		"groupOrder": ["ai-startup-kit", "assetpro-3d-shapes"]
 	},
 	"blue": {
 		"name": "Blue",
@@ -38,7 +38,6 @@
 		"groupOrder": [
 			"assetpro-3d-shapes",
 			"abstract-3d-shapes",
-			"framer-plugins",
 			"brut-hyperrealism",
 			"3d-asset-library"
 		]

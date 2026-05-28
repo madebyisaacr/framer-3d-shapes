@@ -47,13 +47,6 @@
 		"authorName": "Framer",
 		"license": null
 	},
-	"framer-plugins": {
-		"source": "https://github.com/framer/plugins",
-		"sourceTitle": "framer/plugins",
-		"authorName": "Framer",
-		"license": "MIT",
-		"licenseUrl": "https://github.com/framer/plugins/blob/main/LICENSE"
-	},
 	"brut-hyperrealism": {
 		"source": "https://www.figma.com/community/file/1078279005212606109",
 		"sourceTitle": "Brut - Hyperrealism illustration",

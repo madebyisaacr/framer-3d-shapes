@@ -1,4 +1,4 @@
-import { framer, isBreakpoint, isFrameNode } from "framer-plugin";
+import { framer, isBreakpoint, isFrameNode } from "@framer/plugin";
 import { copyToClipboard } from "./utils";
 
 export default function AdminUI() {

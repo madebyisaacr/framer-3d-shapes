@@ -1,4 +1,4 @@
-import { Draggable, framer, type ImageAsset, useIsAllowedTo } from "framer-plugin";
+import { Draggable, framer, type ImageAsset, useIsAllowedTo } from "@framer/plugin";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdminUI from "./AdminUI";
 import assetsData from "./data/assets.json";
@@ -23,7 +23,7 @@ void framer.showUI({
 	width: IS_CANVAS ? 280 : 600,
 	minWidth: IS_CANVAS ? 260 : 600,
 	maxWidth: 600,
-	height: IS_CANVAS ? 450 : 625,
+	height: IS_CANVAS ? 450 : 640,
 	minHeight: 400,
 	maxHeight: 740,
 	resizable: IS_CANVAS,
@@ -391,19 +391,22 @@ function AssetPicker() {
 					<SearchIcon />
 				</div>
 			</div> */}
-			<select
-				className="category-dropdown"
-				value={categoryId}
-				onChange={(e) => setCategoryId(e.target.value)}
-				aria-label="Category"
-			>
-				<option value="">All</option>
-				{categoriesList.map((cat) => (
-					<option key={cat.value} value={cat.value}>
-						{cat.label}
-					</option>
-				))}
-			</select>
+			<div className="category-dropdown-container">
+				<select
+					className="category-dropdown"
+					value={categoryId}
+					onChange={(e) => setCategoryId(e.target.value)}
+					aria-label="Category"
+				>
+					<option value="">All</option>
+					{categoriesList.map((cat) => (
+						<option key={cat.value} value={cat.value}>
+							{cat.label}
+						</option>
+					))}
+				</select>
+				<hr />
+			</div>
 			<PhotosList query={debouncedQuery} categoryId={categoryId} onShowSource={handleShowSource} />
 			{showModal && modalContent && (
 				<div className="modal-container">
@@ -657,7 +660,7 @@ const GridItem = memo(function GridItem({
 						if (!isAllowedToUpsertImage) return;
 						handleClick();
 					}}
-					className="grid-item-btn"
+					className="grid-item-button"
 					style={{
 						backgroundImage: `url(${normalizeFramerImageUrl(asset.url)})`,
 					}}

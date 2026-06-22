@@ -2,16 +2,17 @@
 
 body {
 	--bg-color-modal: var(--framer-color-bg);
+	--border-color: rgba(0, 0, 0, 0.05);
 }
 
 body[data-framer-theme="dark"] {
-	--bg-color-modal: #181818;
+	--bg-color-modal: #1f1f1f;
+	--border-color: rgba(255, 255, 255, 0.07);
 }
 
 main {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
 	height: 100%;
 	padding-left: 15px;
 	padding-right: 15px;
@@ -40,6 +41,13 @@ main {
 	color: var(--framer-color-text-tertiary);
 }
 
+.category-dropdown-container {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
 .category-dropdown {
 	width: 100%;
 }
@@ -56,8 +64,7 @@ main {
 	overflow: auto;
 	position: relative;
 	flex: 1;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+	padding-top: 10px;
 	padding-bottom: 15px;
 }
 
@@ -88,7 +95,7 @@ main {
 	gap: 5px;
 }
 
-.grid-item-btn {
+.grid-item-button {
 	width: 100%;
 	aspect-ratio: 1;
 	cursor: pointer;
@@ -99,14 +106,8 @@ main {
 	border-radius: 10px;
 	flex-shrink: 0;
 	height: auto;
-}
-
-[data-framer-theme="dark"] .grid-item-btn {
-	background-color: var(--framer-color-bg-secondary);
-}
-
-[data-framer-theme="dark"] .grid-item-btn:hover {
-	background-color: var(--framer-color-bg-tertiary);
+	background-color: var(--framer-color-control) !important;
+	box-shadow: inset 0px 0px 0px 1px var(--border-color);
 }
 
 .grid-item-info-btn {
@@ -127,7 +128,7 @@ main {
 	background-color: rgba(200, 200, 200, 0.4);
 }
 
-.grid-item-btn:hover .grid-item-info-btn {
+.grid-item-button:hover .grid-item-info-btn {
 	opacity: 1;
 }
 
@@ -179,7 +180,7 @@ main {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 8px;
+	padding: 10px;
 }
 
 .modal-backdrop {
@@ -198,15 +199,27 @@ main {
 	width: 100%;
 	max-width: 260px;
 	max-height: 100%;
-	padding: 15px;
+	padding: 10px;
 	display: flex;
 	flex-direction: column;
-	gap: 15px;
+	gap: 10px;
 	border-radius: 15px;
 	background-color: var(--bg-color-modal);
-	box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 30px 0px;
+	box-shadow:
+		0px 3px 6px 0px rgba(0, 0, 0, 0.08),
+		0px 0px 0px 1px var(--border-color);
 	position: relative;
 	animation: modalFadeIn 150ms ease both;
+}
+
+[data-framer-theme="dark"] .modal {
+	box-shadow:
+		0px 3px 6px 0px rgba(0, 0, 0, 0.08),
+		inset 0px 0px 0px 1px var(--border-color);
+}
+
+[data-framer-theme="dark"] .modal button {
+	background-color: #303030;
 }
 
 @keyframes modalFadeIn {

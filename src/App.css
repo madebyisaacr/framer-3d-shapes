@@ -50,6 +50,21 @@ main {
 
 .category-dropdown {
 	width: 100%;
+	background-color: var(--framer-color-control);
+	height: 30px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-radius: 8px;
+	padding: 0 10px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.category-dropdown svg {
+	color: #999;
+	pointer-events: none;
 }
 
 .empty-state {

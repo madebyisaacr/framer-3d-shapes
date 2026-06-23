@@ -289,6 +289,10 @@ function AssetPicker() {
 	const [modalDownloading, setModalDownloading] = useState(false);
 	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
 
+	const categoryButtonRef = useRef<HTMLDivElement>(null);
+
+	const categoryName = categoryId ? (categoriesDataTyped[categoryId]?.name ?? categoryId) : "All";
+
 	useEffect(() => {
 		try {
 			localStorage.setItem(CATEGORY_STORAGE_KEY, categoryId);
@@ -377,6 +381,35 @@ function AssetPicker() {
 		]
 	);
 
+	const showCategoryDropdown = () => {
+		const rect = categoryButtonRef.current?.getBoundingClientRect();
+
+		void framer.showContextMenu(
+			[
+				{
+					label: "All",
+					checked: categoryId === "",
+					onAction: () => setCategoryId(""),
+				},
+				{
+					type: "separator",
+				},
+				...categoriesList.map((category) => ({
+					label: category.label,
+					checked: categoryId === category.value,
+					onAction: () => setCategoryId(category.value),
+				})),
+			],
+			{
+				location: {
+					x: rect?.x ?? 0,
+					y: (rect?.y ?? 0) + (rect?.height ?? 0) + 4,
+				},
+				width: (rect?.width ?? 0) + 8,
+			}
+		);
+	};
+
 	return (
 		<main>
 			{/* <div className="search-header">
@@ -392,19 +425,31 @@ function AssetPicker() {
 				</div>
 			</div> */}
 			<div className="category-dropdown-container">
-				<select
+				<div
+					ref={categoryButtonRef}
 					className="category-dropdown"
-					value={categoryId}
-					onChange={(e) => setCategoryId(e.target.value)}
 					aria-label="Category"
+					onClick={showCategoryDropdown}
 				>
-					<option value="">All</option>
-					{categoriesList.map((cat) => (
-						<option key={cat.value} value={cat.value}>
-							{cat.label}
-						</option>
-					))}
-				</select>
+					{categoryName}
+					<svg
+						role="presentation"
+						xmlns="http://www.w3.org/2000/svg"
+						width="8"
+						height="8"
+						viewBox="0 0 8 8"
+						aria-hidden="true"
+					>
+						<path
+							d="m1 2.75 2.293 2.293a1 1 0 0 0 1.414 0L7 2.75"
+							fill="transparent"
+							strokeWidth="1.5"
+							stroke="currentColor"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						></path>
+					</svg>
+				</div>
 				<hr />
 			</div>
 			<PhotosList query={debouncedQuery} categoryId={categoryId} onShowSource={handleShowSource} />

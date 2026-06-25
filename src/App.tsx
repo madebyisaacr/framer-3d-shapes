@@ -287,7 +287,11 @@ function AssetPicker() {
 	const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
 	const [modalAsset, setModalAsset] = useState<AssetImage | null>(null);
 	const [modalDownloading, setModalDownloading] = useState(false);
-	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
+	const isAllowedToAddImage = useIsAllowedTo("addImage");
+	const isAllowedToSetImage = useIsAllowedTo("setImage");
+	const isAllowedToEditImage = IS_CANVAS
+		? isAllowedToAddImage && isAllowedToSetImage
+		: isAllowedToSetImage;
 
 	const categoryButtonRef = useRef<HTMLDivElement>(null);
 
@@ -314,7 +318,7 @@ function AssetPicker() {
 
 	const handleInsertFromModal = useCallback(async () => {
 		if (!modalAsset) return;
-		if (!isAllowedToUpsertImage) return;
+		if (!isAllowedToEditImage) return;
 		try {
 			if (IS_CANVAS) {
 				let currentImage: ImageAsset | null = null;
@@ -345,7 +349,7 @@ function AssetPicker() {
 		} catch {
 			// ignore (same behavior as grid insert: don't block UI)
 		}
-	}, [isAllowedToUpsertImage, modalAsset]);
+	}, [isAllowedToEditImage, modalAsset]);
 
 	const handleDownloadFromModal = useCallback(async () => {
 		if (!modalAsset) return;
@@ -365,7 +369,7 @@ function AssetPicker() {
 			showAssetContextMenu({
 				asset: modalAsset,
 				location: { x: event.clientX, y: event.clientY },
-				isInsertEnabled: isAllowedToUpsertImage,
+				isInsertEnabled: isAllowedToEditImage,
 				onInsert: () => void handleInsertFromModal(),
 				onDownload: () => void handleDownloadFromModal(),
 				onInfo: () => handleShowSource(modalAsset),
@@ -376,7 +380,7 @@ function AssetPicker() {
 			handleDownloadFromModal,
 			handleInsertFromModal,
 			handleShowSource,
-			isAllowedToUpsertImage,
+			isAllowedToEditImage,
 			modalAsset,
 		]
 	);
@@ -452,7 +456,12 @@ function AssetPicker() {
 				</div>
 				<hr />
 			</div>
-			<PhotosList query={debouncedQuery} categoryId={categoryId} onShowSource={handleShowSource} />
+			<PhotosList
+				query={debouncedQuery}
+				categoryId={categoryId}
+				onShowSource={handleShowSource}
+				isAllowedToEditImage={isAllowedToEditImage}
+			/>
 			{showModal && modalContent && (
 				<div className="modal-container">
 					<div className="modal-backdrop" onClick={() => setShowModal(false)} />
@@ -522,12 +531,13 @@ const PhotosList = memo(function PhotosList({
 	query,
 	categoryId,
 	onShowSource,
+	isAllowedToEditImage,
 }: {
 	query: string;
 	categoryId: string;
 	onShowSource: (asset: AssetImage) => void;
+	isAllowedToEditImage: boolean;
 }) {
-	const isAllowedToUpsertImage = useIsAllowedTo("addImage", "setImage", "Node.setAttributes");
 	const { data, fetchNextPage, hasNextPage } = useAssetsInfinite(query, categoryId);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const previousWindowHeightRef = useRef(window.innerHeight);
@@ -640,7 +650,7 @@ const PhotosList = memo(function PhotosList({
 						loading={loadingId === asset.id || downloadingId === asset.id}
 						onSelect={addAsset}
 						onDownload={downloadAsset}
-						isAllowedToUpsertImage={isAllowedToUpsertImage}
+						isAllowedToEditImage={isAllowedToEditImage}
 						onShowSource={onShowSource}
 					/>
 				))}
@@ -654,7 +664,7 @@ interface GridItemProps {
 	loading: boolean;
 	onSelect: (asset: AssetImage) => void;
 	onDownload: (asset: AssetImage) => void;
-	isAllowedToUpsertImage: boolean;
+	isAllowedToEditImage: boolean;
 	onShowSource: (asset: AssetImage) => void;
 }
 
@@ -663,7 +673,7 @@ const GridItem = memo(function GridItem({
 	loading,
 	onSelect,
 	onDownload,
-	isAllowedToUpsertImage,
+	isAllowedToEditImage,
 	onShowSource,
 }: GridItemProps) {
 	const handleClick = useCallback(() => {
@@ -681,13 +691,13 @@ const GridItem = memo(function GridItem({
 			showAssetContextMenu({
 				asset,
 				location: { x: event.clientX, y: event.clientY },
-				isInsertEnabled: isAllowedToUpsertImage && !loading,
+				isInsertEnabled: isAllowedToEditImage && !loading,
 				onInsert: handleClick,
 				onDownload: handleDownload,
 				onInfo: () => onShowSource(asset),
 			});
 		},
-		[asset, handleClick, handleDownload, isAllowedToUpsertImage, loading, onShowSource]
+		[asset, handleClick, handleDownload, isAllowedToEditImage, loading, onShowSource]
 	);
 
 	return (
@@ -702,15 +712,15 @@ const GridItem = memo(function GridItem({
 			>
 				<button
 					onClick={() => {
-						if (!isAllowedToUpsertImage) return;
+						if (!isAllowedToEditImage) return;
 						handleClick();
 					}}
 					className="grid-item-button"
 					style={{
 						backgroundImage: `url(${normalizeFramerImageUrl(asset.url)})`,
 					}}
-					disabled={!isAllowedToUpsertImage}
-					title={isAllowedToUpsertImage ? undefined : "Insufficient permissions"}
+					disabled={!isAllowedToEditImage}
+					title={isAllowedToEditImage ? undefined : "Insufficient permissions"}
 				>
 					<div className={`grid-item-overlay ${loading ? "loading" : ""}`}>
 						<div className={`framer-spinner image-spinner ${loading ? "is-visible" : ""}`} />
